@@ -1,0 +1,213 @@
+{% load static %}
+<! Doctype html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="{% static 'css/bootstrap.min.css'%}">
+<style>
+.t{color:red}
+nav2{margin-left:10px}
+.h{display:none}[hidden]{display:none!important}
+.audioPlayer {
+    width: auto;
+    height: 300px;
+    background-size: cover;
+    position: relative;
+}
+
+.audioPlayer audio{
+  position: absolute;
+  bottom: 0;
+  width: 100%
+}
+</style>
+
+
+</head>
+<body>
+<nav class="navbar navbar-light bg-black justify-content-between">
+  <a class="navbar-brand"><img src="{% static 'img/home.png'%}" height=50px class="im"></a>
+  <a href="{% url 'menu' %}">
+   <img src="{% static 'img/menu.png'%}" height=18px style="margin-left:60px">
+   </a>
+   <a href="{% url 'searchp' %}">
+  <img src="{% static 'img/loupe.png'%}" height=18px style="margin-left:7px">
+  </a>
+  {% if user.profilepage%}
+  <a href="{% url 'profile' %}">
+  <img src="{% static 'img/profile.svg'%}">
+  </a>
+  {%else%}
+     <a href="{% url 'profile' %}">
+  <img src="{% static 'img/newuser.png'%}" height=18px style="margin-left:7px">
+  </a>
+  {%endif%}
+</nav>
+
+
+
+
+
+
+<nav class="navbar navbar-light bg-light nav2">
+  <a class="navbar-brand" href="{% url 'index' %}">
+    <img src="{% static 'img/home.svg'%}" width="20" height="20" alt="home">
+  </a>
+  <a class="navbar-brand" href="{% url 'roomchat' %}">
+    <img src="{% static 'img/messages.svg'%}" width="20" height="20" alt="home">
+  </a>
+  <a class="navbar-brand" href="#">
+    <img src="{% static 'img/notification.svg'%}" width="20" height="20" alt="home"><span class="badge badge-pill badge-danger" style="margin-top:0px;font-size:12px">1</span> 
+  </a>
+  <a class="navbar-brand" href="{% url 'play' %}">
+    <img src="{% static 'img/display.svg'%}" width="20" height="20" alt="home" >
+  </a>
+  <a class="navbar-brand" href="{% url 'song' %}">
+    <img src="{% static 'img/music-note-beamed.svg'%}" width="20" height="20" alt="home" >
+  </a>
+</nav>
+{% if user.profilepage%}
+
+<div class="alert alert-light" role="alert" style="margin-top:20px">
+<div class="media">
+  <img class="mr-3 rounded-circle" src="{{user.profilepage.photoprofile.url}}" alt="Generic placeholder image" height=50px width=50px style="margin-left:10px">
+  <div class="media-body">
+    <p class="mt-0">
+    {{user.first_name}}
+{{user.last_name}}
+<a href="{% url 'addpost' %}">
+<img src="{% static 'img/add.png'%}"  height=40px width=40px style="margin-left:100px">
+</a>
+</p> <br>
+
+  </div>
+</div>
+</div>
+</div>
+<hr>
+<br>
+{% for posts in posts%}
+{{posts.author.user.id}}
+
+{% if posts.video%}
+      
+<div class="card" style="width: auto;hieght:auto">
+    <video class="embed-responsive embed-responsive-16by9" controls="controls">
+<source src='{{posts.video.url}}' type="video/mp4" />
+</video>
+  <div class="card-body">
+    <h5 class="card-title">{{posts.post}}</h5>
+    <p class="card-text"><img src="{% static 'img/user.png' %}" height=20px> 
+<a href=" {% url 'profile'  posts.author.id%}" class="" >{{posts.author.first_name}} {{posts.author.last_name}} <img src="{{posts.author.profilepage.photoverify.url}}" height=15px width=15px style="margin-bottom:4px"></a></p></p>
+    <img src="{% static 'img/back-in-time.png' %}" height=20px>
+     {{posts.date}}</p>
+     <ul class="nav justify-content-center">
+  <li class="nav-item">
+       <form action="{% url 'likeview' posts.id %}" method="POST">
+     {% csrf_token %}
+     <button type="submit", name="sr",value="{{posts.id}}", class="btn btn-light">
+     <img src="{% static 'img/like.png' %}" height=30px>  <span class="badge badge-light"  > {{posts.total_likes}}</span>
+     </button>
+</form>
+  </li>
+  <li>
+   <a href="{%url 'post_details' posts.pk%}" >
+    <button type="submit", name="sr",value="{{posts.id}}", class="btn btn-light" style="margin-bottom:40px;margin-left:40px;padding-left:10px">
+<img src="{% static 'img/comment.png' %}" height=30px>  <span class="badge badge-light"  > 1k</span>
+</button>
+</a>
+    </li>
+  <li class="nav-item">
+    <a class="nav-link" href="#">Link</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="#">Link</a>
+  </li>
+</ul>
+         
+  </div>
+</div>
+</p>
+   
+{%elif posts.songaudio%}
+<div class="audioPlayer" style="    background-image: url('{{posts.songcover.url}}');">
+  <audio controls = 'controls' >
+    <source src='{{posts.songaudio.url}}' type= 'audio/mp3' >
+  </audio>
+     <p class="card-text"><img class="mr-3 rounded-circle" src='{{posts.author.profilepage.photoprofile.url}}' alt="Generic placeholder image" height=40px width=40px ><a href=" {% url 'profile'  posts.author.id%}" class="" style="color:white">{{posts.author.first_name}} {{posts.author.last_name}} <img src="{{posts.author.profilepage.photoverify.url}}" height=15px width=15px style="margin-bottom:4px"></a></p></p>
+    <img src="{% static 'img/back-in-time.png' %}" height=20px style="color:white">  
+    {{posts.date}}
+      <h5 style="color:white">Song Passt With you</h5>
+</div><br><br>
+  </div>
+</div>
+</p>
+
+ {%else%}
+ 
+<p style="text-align:center">
+{% if posts.photo %}
+<div class="card" style="width:auto;">
+  <img src="{{posts.photo.url}}" class="card-img-top" alt="...">
+  <div class="card" style="width: 22rem;">
+{%else%}
+{%endif%}
+    <div class="card-body">
+    <h3 class="card-title" >
+    <a href="{%url 'post_details' posts.pk%}" class="text text-primary" >
+ {{posts.post}}
+    </a>
+    </h3>
+    <p class="card-text" > <img src="{% static 'img/user.png' %}" height=20px> 
+<a href=" {% url 'profile'  posts.author.id%}" class="" >{{posts.author.first_name}} {{posts.author.last_name}} <img src="{{posts.author.profilepage.photoverify.url}}" height=15px width=15px style="margin-bottom:4px"></a></p>
+    <p class="card-text"><img src="{% static 'img/back-in-time.png' %}" height=20px>
+     {{posts.date}}</p>
+     <ul class="nav justify-content-center">
+  <li class="nav-item">
+       <form action="{% url 'likeview' posts.id %}" method="POST">
+     {% csrf_token %}
+     <button type="submit", name="sr",value="{{posts.id}}", class="btn btn-light">
+     <img src="{% static 'img/like.png' %}" height=30px>  <span class="badge badge-light"  > {{posts.total_likes}}</span>
+     </button>
+</form>
+  </li>
+  <li>
+   <a href="{%url 'post_details' posts.pk%}" >
+    <button type="submit", name="sr",value="{{posts.id}}", class="btn btn-light" style="margin-bottom:40px;margin-left:40px;padding-left:10px">
+<img src="{% static 'img/comment.png' %}" height=30px>  <span class="badge badge-light"  > 1k</span>
+</button>
+</a>
+    </li>
+  <li class="nav-item">
+    <a class="nav-link" href="#">Link</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="#">Link</a>
+  </li>
+</ul>
+         
+  </div>
+</div>
+</p>
+{%endif%}
+{%endfor%}
+{%else%}
+<img src="{% static 'img/errors.png' %}" height=355px> 
+<h5>Complete Create Your Profile Page from <a href="#">Here</a></h5>
+{%endif%}
+
+
+
+
+
+
+
+
+
+ <script>
+var name = "{{posts.id}}";
+document.getElementById("i").value = name;
+</script>
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</body>
+</html>
